@@ -24,11 +24,13 @@ jobs:
           flutter-version: '3.x'
           channel: 'stable'
 
-      - name: Fix AAPT2
+      - name: Copy AAPT2 to Flutter SDK
         run: |
-          flutter config --android-sdk /usr/local/lib/android/sdk
-          yes | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0" || true
-          yes | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          mkdir -p /root/android-sdk/build-tools/35.0.0/
+          cp /usr/local/lib/android/sdk/build-tools/35.0.0/aapt2 \
+             /root/android-sdk/build-tools/35.0.0/aapt2
+          chmod +x /root/android-sdk/build-tools/35.0.0/aapt2
+          echo "✅ aapt2 copied successfully"
 
       - run: flutter pub get
 
