@@ -24,16 +24,20 @@ jobs:
           flutter-version: '3.x'
           channel: 'stable'
 
-      - name: Copy AAPT2 to Flutter SDK
+      - name: Debug - Find actual paths
         run: |
-          mkdir -p /root/android-sdk/build-tools/35.0.0/
-          cp /usr/local/lib/android/sdk/build-tools/35.0.0/aapt2 \
-             /root/android-sdk/build-tools/35.0.0/aapt2
-          chmod +x /root/android-sdk/build-tools/35.0.0/aapt2
-          echo "✅ aapt2 copied successfully"
+          echo "=== WHO AM I ==="
+          whoami
+          echo "=== ANDROID_HOME ==="
+          echo $ANDROID_HOME
+          echo "=== ANDROID_SDK_ROOT ==="
+          echo $ANDROID_SDK_ROOT
+          echo "=== Flutter Doctor ==="
+          flutter doctor -v
+          echo "=== Find aapt2 on system ==="
+          find / -name "aapt2" 2>/dev/null || true
 
       - run: flutter pub get
-
       - run: flutter build apk --debug --no-tree-shake-icons
 
       - uses: actions/upload-artifact@v4
