@@ -2,7 +2,7 @@ name: Build Flutter APK
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   workflow_dispatch:
 
 env:
@@ -16,31 +16,29 @@ jobs:
 
       - uses: actions/setup-java@v4
         with:
+          distribution: temurin
           java-version: '17'
-          distribution: 'temurin'
 
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.x'
-          channel: 'stable'
+          channel: stable
+          flutter-version: '3.35.5'
+          cache: true
 
-      - name: Debug - Find actual paths
+      - name: Force correct local.properties
         run: |
-          echo "=== WHO AM I ==="
-          whoami
-          echo "=== ANDROID_HOME ==="
-          echo $ANDROID_HOME
-          echo "=== ANDROID_SDK_ROOT ==="
-          echo $ANDROID_SDK_ROOT
-          echo "=== Flutter Doctor ==="
-          flutter doctor -v
-          echo "=== Find aapt2 on system ==="
-          find / -name "aapt2" 2>/dev/null || true
+          rm -f android/local.properties
+          mkdir -p android
+          echo "sdk.dir=$ANDROID_HOME" > android/local.properties
+          echo "flutter.sdk=$FLUTTER_ROOT" >> android/local.properties
+          cat android/local.properties
 
       - run: flutter pub get
+
       - run: flutter build apk --debug --no-tree-shake-icons
 
       - uses: actions/upload-artifact@v4
         with:
-          name: biodatakar-debug
+          name: app-debug-apk
           path: build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
