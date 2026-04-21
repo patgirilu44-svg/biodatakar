@@ -19,13 +19,16 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.x'
           channel: 'stable'
+
+      - name: Fix AAPT2
+        run: |
+          flutter config --android-sdk /usr/local/lib/android/sdk
+          yes | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0" || true
+          yes | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
       - run: flutter pub get
 
